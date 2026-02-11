@@ -32,7 +32,7 @@ public class Gradebook {
         //push an action onto undo stack to remove this grade
         UndoAction undo = gradebook -> gradebook.gradesByStudent.get(name).remove(index);
         undoStack.push(undo);
-        activityLog.add("Added grade " + grade);
+        activityLog.add("Added grade " + grade + "for" + name);
         return true;
 
     }
@@ -58,7 +58,7 @@ public class Gradebook {
     public Optional<Double> averageFor(String name) {
 
         Optional<List<Integer>> grades = findStudentGrades(name);
-        if (!grades.isPresent()) {
+        if (!grades.isPresent() || grades.get().isEmpty()) {
             return Optional.empty();
         }
         int sum = 0;

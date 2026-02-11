@@ -39,8 +39,14 @@ public class Gradebook {
 
     public boolean removeStudent(String name) {
         if (gradesByStudent.containsKey(name)) {
+            Optional <List<Integer>> grades = findStudentGrades(name);
             gradesByStudent.remove(name);
-            UndoAction undo = gradebook -> gradebook.addStudent(name);
+            UndoAction undo = gradebook -> {
+                gradebook.addStudent(name);
+                for (Integer grade : grades.get()) {
+                    gradesByStudent.get(name).add(grade);
+                }
+            };
             undoStack.push(undo);
             activityLog.add("student " + name + " removed");
             return true;

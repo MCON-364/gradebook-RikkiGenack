@@ -50,16 +50,15 @@ public class Gradebook {
     public Optional<Double> averageFor(String name) {
 
         Optional<List<Integer>> grades = findStudentGrades(name);
-        if (grades.isPresent()) {
+        if (grades.isEmpty()) {
+            return Optional.empty();
+        }
         int sum = 0;
         for (Integer grade : grades.orElse(null)) {
             sum += grade;
         }
         Double average = ((double) sum / (grades.get().size()));
-
         return Optional.of(average);
-    }
-        return Optional.empty();
     }
 
     public Optional<String> letterGradeFor(String name) {
@@ -89,23 +88,24 @@ public class Gradebook {
     }
 
     public Optional<Double> classAverage() {
-        if (gradesByStudent.isEmpty()) {
-            return Optional.empty();
-        }
         int sum = 0;
         int gradeAmt = 0;
         Students:
         for (String student : gradesByStudent.keySet()) {
             List<Integer> grades = gradesByStudent.get(student);
+            if (grades.isEmpty()) {
+                continue Students;
+            }
             StudentsGrades:
             for (Integer grade : grades) {
                 sum += grade;
                 gradeAmt++;
             }
-
         }
         Double average = (double) (sum / (double) gradeAmt);
-
+        if (gradeAmt < 1) {
+            return Optional.empty();
+        }
         return Optional.of(average);
     }
 

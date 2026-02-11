@@ -54,7 +54,7 @@ public class Gradebook {
         for(Integer grade : grades) {
             sum += grade;
         }
-        Double average = (double) (sum/grades.size());
+        Double average = (double) ((double)sum/(grades.size());
 
         return Optional.of(average);
     }
@@ -100,7 +100,7 @@ public class Gradebook {
             }
 
         }
-        Double average = (double) (sum/gradeAmt);
+        Double average = (double) (sum/(double)gradeAmt);
 
       return Optional.of(average);
     }

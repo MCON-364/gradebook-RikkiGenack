@@ -30,8 +30,6 @@ public class Gradebook {
         //push an action onto undo stack to remove this grade
         UndoAction undo = gradebook -> {gradesByStudent.get(name).remove(grade);};
         undoStack.push(undo);
-
-
         return true;
 
     }
@@ -49,22 +47,23 @@ public class Gradebook {
 
     public Optional<Double> averageFor(String name) {
         List<Integer> grades = gradesByStudent.get(name);
+        if(grades.isEmpty()) {
+            return Optional.empty();
+        }
         int sum = 0;
         for(Integer grade : grades) {
             sum += grade;
         }
         Double average = (double) (sum/grades.size());
-        if(grades.isEmpty()) {
-            return Optional.empty();
-        }
+
         return Optional.of(average);
     }
 
     public Optional<String> letterGradeFor(String name) {
 
        Optional <Double> avg = averageFor(name);
-       Double doubleAvg = avg.get();
-       if(avg.isPresent()) {
+        if(avg.isPresent()) {
+            Double doubleAvg = avg.get();
            String grade = switch (doubleAvg) {
                case Double d when d >= 90 ->{
                    yield "A";
@@ -86,22 +85,23 @@ public class Gradebook {
     }
 
     public Optional<Double> classAverage() {
+        if(gradesByStudent.isEmpty()) {
+            return Optional.empty();
+        }
         int sum = 0;
-        int studentAmt =0;
+        int gradeAmt =0;
         Students:
         for(String student : gradesByStudent.keySet() ) {
-            studentAmt++;
             List<Integer> grades = gradesByStudent.get(student);
             StudentsGrades:
             for(Integer grade: grades){
                 sum += grade;
+                gradeAmt++;
             }
 
         }
-        Double average = (double) (sum/studentAmt);
-        if(gradesByStudent.isEmpty()) {
-            return Optional.empty();
-        }
+        Double average = (double) (sum/gradeAmt);
+
       return Optional.of(average);
     }
 

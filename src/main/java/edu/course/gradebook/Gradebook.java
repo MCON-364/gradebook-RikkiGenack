@@ -28,9 +28,7 @@ public class Gradebook {
         }
         gradesByStudent.get(name).add(grade);
         //push an action onto undo stack to remove this grade
-        UndoAction undo = gradebook -> {
-            gradesByStudent.get(name).remove(grade);
-        };
+        UndoAction undo = gradebook -> gradesByStudent.get(name).remove(grade);
         undoStack.push(undo);
         return true;
 
@@ -39,9 +37,7 @@ public class Gradebook {
     public boolean removeStudent(String name) {
         if (gradesByStudent.containsKey(name)) {
             gradesByStudent.remove(name);
-            UndoAction undo = gradebook -> {
-                addStudent(name);
-            };
+            UndoAction undo = gradebook -> addStudent(name);
             undoStack.push(undo);
             activityLog.add("student " + name + " removed");
             return true;
@@ -58,7 +54,7 @@ public class Gradebook {
         for (Integer grade : grades) {
             sum += grade;
         }
-        Double average = (double) ((double) sum / (grades.size());
+        Double average = ((double) sum / (grades.size()));
 
         return Optional.of(average);
     }

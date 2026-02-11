@@ -48,7 +48,7 @@ public class Gradebook {
                 }
             };
             undoStack.push(undo);
-            activityLog.add("student " + name + " removed");
+            activityLog.add("Removed student " + name);
             return true;
         }
         activityLog.add("Student " + name + " not found");

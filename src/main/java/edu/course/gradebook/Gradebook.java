@@ -18,6 +18,7 @@ public class Gradebook {
             return false;
         }
         gradesByStudent.put(name, new ArrayList<Integer>());
+        activityLog.add("Added student " + name);
         return true;
     }
 
@@ -42,21 +43,23 @@ public class Gradebook {
             activityLog.add("student " + name + " removed");
             return true;
         }
+        activityLog.add("Student " + name + " not found");
         return false;
     }
 
     public Optional<Double> averageFor(String name) {
-        List<Integer> grades = gradesByStudent.get(name);
-        if (grades.isEmpty()) {
-            return Optional.empty();
-        }
+
+        Optional<List<Integer>> grades = findStudentGrades(name);
+        if (grades.isPresent()) {
         int sum = 0;
-        for (Integer grade : grades) {
+        for (Integer grade : grades.orElse(null)) {
             sum += grade;
         }
-        Double average = ((double) sum / (grades.size()));
+        Double average = ((double) sum / (grades.get().size()));
 
         return Optional.of(average);
+    }
+        return Optional.empty();
     }
 
     public Optional<String> letterGradeFor(String name) {

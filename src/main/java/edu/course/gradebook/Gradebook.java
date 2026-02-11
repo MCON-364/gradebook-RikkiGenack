@@ -44,7 +44,7 @@ public class Gradebook {
             UndoAction undo = gradebook -> {
                 gradebook.addStudent(name);
                 for (Integer grade : grades.get()) {
-                    gradesByStudent.get(name).add(grade);
+                    gradebook.gradesByStudent.get(name).add(grade);
                 }
             };
             undoStack.push(undo);
@@ -58,11 +58,11 @@ public class Gradebook {
     public Optional<Double> averageFor(String name) {
 
         Optional<List<Integer>> grades = findStudentGrades(name);
-        if (grades.get().isEmpty()) {
+        if (!grades.isPresent()) {
             return Optional.empty();
         }
         int sum = 0;
-        for (Integer grade : grades.orElse(null)) {
+        for (int grade : grades.get()) {
             sum += grade;
         }
         Double average = ((double) sum / (grades.get().size()));
@@ -72,7 +72,7 @@ public class Gradebook {
     public Optional<String> letterGradeFor(String name) {
 
         Optional<Double> avg = averageFor(name);
-        if (!avg.get().isNaN()) {
+        if (avg.isPresent()) {
             Double doubleAvg = avg.get();
             String grade = switch (doubleAvg) {
                 case Double d when d >= 90 -> {
@@ -110,11 +110,12 @@ public class Gradebook {
                 gradeAmt++;
             }
         }
-        Double average = (double) (sum / (double) gradeAmt);
-        if (gradeAmt < 1) {
-            return Optional.empty();
+        if (gradeAmt>0) {
+            Double average = (double) (sum / (double) gradeAmt);
+            return Optional.of(average);
         }
-        return Optional.of(average);
+            return Optional.empty();
+
     }
 
     public boolean undo() {

@@ -28,9 +28,11 @@ public class Gradebook {
             return false;
         }
         gradesByStudent.get(name).add(grade);
+        int index = gradesByStudent.get(name).size()-1;
         //push an action onto undo stack to remove this grade
-        UndoAction undo = gradebook -> gradesByStudent.get(name).remove(grade);
+        UndoAction undo = gradebook -> gradebook.gradesByStudent.get(name).remove(index);
         undoStack.push(undo);
+        activityLog.add("Added grade " + grade);
         return true;
 
     }
@@ -38,7 +40,7 @@ public class Gradebook {
     public boolean removeStudent(String name) {
         if (gradesByStudent.containsKey(name)) {
             gradesByStudent.remove(name);
-            UndoAction undo = gradebook -> addStudent(name);
+            UndoAction undo = gradebook -> gradebook.addStudent(name);
             undoStack.push(undo);
             activityLog.add("student " + name + " removed");
             return true;
@@ -50,7 +52,7 @@ public class Gradebook {
     public Optional<Double> averageFor(String name) {
 
         Optional<List<Integer>> grades = findStudentGrades(name);
-        if (grades.isEmpty()) {
+        if (grades.get().isEmpty()) {
             return Optional.empty();
         }
         int sum = 0;
@@ -64,7 +66,7 @@ public class Gradebook {
     public Optional<String> letterGradeFor(String name) {
 
         Optional<Double> avg = averageFor(name);
-        if (avg.isPresent()) {
+        if (!avg.get().isNaN()) {
             Double doubleAvg = avg.get();
             String grade = switch (doubleAvg) {
                 case Double d when d >= 90 -> {
@@ -111,11 +113,13 @@ public class Gradebook {
 
     public boolean undo() {
         if (undoStack.isEmpty()) {
+            activityLog.add("No action to undo");
             return false;
+
         }
         UndoAction last = undoStack.pop();
         last.undo(this);
-        activityLog.push("Undid last action");
+        activityLog.add("Undid action");
         return true;
 
     }
